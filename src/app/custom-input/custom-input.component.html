@@ -1,0 +1,9 @@
+<div class="form-control">
+  <span>{{label}}</span>
+  <input #currentInput
+         [placeholder]="placeHolder"
+         [value]="data"
+         (keyup)="onKeyPress($event, currentInput)"
+         (keyup.backspace)="onBackspaceKey($event, currentInput)"
+         (change)="onKeyPress($event, currentInput)"/>
+</div>

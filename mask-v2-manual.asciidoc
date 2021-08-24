@@ -1,0 +1,248 @@
+== Руководство по использованию маски mask-v2 в процессе разработки
+
+****
+МАСКА является частью веб-компонента АКСЕССОР. Описание работы с данным компонентом выходит за рамки данного руководства
+****
+
+=== Общие сведения
+
+****
+В текущей версии ВЕРСИЯ АКСЕССОР маска предоставляет следующие варианты:
+
+* bik - заполнение БИК
+* custom - заполнение кастомной маски по записанному шаблону
+* date - заполнение даты
+* email - заполнение электронной почты
+* inn - заполнение ИНН
+* kpp - заполнение КПП
+* money - заполнение поля деньги
+* phone - заполнение телефонного номера
+* rs - заполнение расчетного счета
+
+****
+****
+Для подключения маски к элементу ввода вместе с директивой аксессора wc-accessor добавляется директива wc-mask-v2, а также атрибуты maskType (обязательно) и maskOptions (опционально), Атрибуты берутся в квадратные скобки, директивы нет.
+****
+
+
+=== bik - заполнение БИК
+****
+Атрибуты:
+[maskType]="'bik'"
+****
+****
+Принимает только цифры. Принудительно отсекает ввод после 9 цифры. В случае некорректного ввода выдает ивент с текстом: 'Isn't digit or more then 9 digits'
+****
+
+Пример использования:
+
+[source]
+  <div>
+    <label for="textBik">БИК (through directive): </label>
+    <input #bik mask [maskType]="'bik'" id="textBik" type="text" placeholder="textBik"/>
+  </div>
+
+=== custom - заполнение кастомной маски по записанному шаблону
+****
+Атрибуты:
+[maskType]="'custom'"
+[maskOptions]="'ШАБЛОН_ВВОДА'"
+****
+****
+Принимает текст согласно шаблону в maskOptions. рПавила шаблона
+* /СИМВОЛ - один любой символ: "/ /_" добавит в выводящийся текст пробел и подчеркивание
+* [D] - ожидается цифра, остальное будет игнорироваться
+* [A] - ожидается буква, остальное будет игнорироваться
+* [AD] или [DA] - ожидается цифра или буква, остальное будет игнорироваться
+* [ЦИФРА..ЦИФРА] - ожидается диапазон между двумя цифрами, включая написанные
+
+****
+
+Пример использования (при вводе "22Ф326Q" будет выведено "22Ф3-_26  Q"):
+
+[source]
+  <div>
+    <label for="textCustom">Custom  (through directive): </label><input #custom mask [maskType]="'custom'" [maskOptions]="'[1..3][D][AD][2..3]/-/_[2..3][D]/ / [A]'" id="textCustom" type="text" placeholder="textCustom"/>
+  </div>
+
+
+
+=== date - заполнение даты
+****
+Атрибуты:
+[maskType]="'date'"
+****
+****
+Принимает цифры и точку разделитель. Приводит текст к виду ЧИСЛО.МЕСЯЦ.ГОД . Отсекает невозможные комбинации числа и месяца
+****
+
+Пример использования:
+
+[source]
+  <div>
+    <label for="textDate">Date (through directive): </label>
+    <input #date mask [maskType]="'date'" id="textDate" type="text" placeholder="textDate"/>
+  </div>
+
+=== email - заполнение электронной почты
+****
+Атрибуты:
+[maskType]="'email'"
+****
+Отсекает запрещенные в почте символы, а также запрещает вводить больше одной "собачки". В случае некорректной почты отправляется ивент с ошибкой.
+****
+Варианты ошибок:
+
+* 'Only one @ permitted'
+* 'Username can't be more then 64 symbols'
+* 'Domain name can\'t be more then 255 symbols'
+* 'Email can't be more then 256 symbols
+****
+
+Пример использования:
+
+[source]
+  <div>
+    <label for="textEmail">Email (through directive): </label>
+    <input #email mask [maskType]="'email'" id="textEmail" type="text" placeholder="textEmail"/>
+  </div>
+
+=== inn - заполнение ИНН
+****
+Атрибуты:
+[maskType]="'inn'"
+****
+****
+Отсекает все кроме цифр. После 10 цифры начинает проверять контрольные суммы и в случае ошибки выдает ивент вида 'У ИНН неверная контрольная сумма'
+****
+
+Пример использования:
+
+[source]
+  <div>
+    <label for="textInn">ИНН (through directive): </label>
+    <input #inn mask [maskType]="'inn'" id="textInn" type="text" placeholder="textInn"/>
+  </div>
+
+=== kpp - заполнение КПП
+****
+Атрибуты:
+[maskType]="'kpp'"
+****
+****
+Отсекает ввод после 9ого символа. Нормализует строчные латинские буквы в заглавные. В случае некорректного ввода выдает ивент.
+****
+****
+Варианты ошибок:
+
+* 'Only alphabet or digit'
+* 'Can't be more then 9 symbols'
+* 'Isn't digit (or alfabet for 5,6 symbol)'
+****
+
+Пример использования:
+
+[source]
+  <div>
+    <label for="textKpp">КПП (through directive): </label>
+    <!--    <input mask [maskType]="'custom'" [maskOptions]="'[1..3][D][A][AD][1..3]/-/_[2..3][D]/ / [A]'" id="textInput3" type="text" placeholder="textInput"/>-->
+    <input #kpp mask [maskType]="'kpp'" id="textKpp" type="text" placeholder="textKpp"/>
+  </div>
+
+=== money - заполнение поля деньги
+****
+Атрибуты:
+[maskType]="'money'"
+****
+****
+Отсекает все, кроме цифр, точек и запятых. Нормализует к виду "12 000 000.00"
+****
+
+Пример использования:
+
+[source]
+  <div>
+    <label for="textMoney">Деньги  (through directive): </label>
+    <input #money mask [maskType]="'money'" id="textMoney" type="text" placeholder="textMoney"/>
+  </div>
+
+=== phone - заполнение телефонного номера
+****
+Атрибуты:
+[maskType]="'phone'"
+****
+****
+Отфильтровывает любой ввод кроме цифр. Отсекает все после 10 цифры. Нормальзует к виду "+7 (800) 456-32-12"
+****
+
+Пример использования:
+
+[source]
+  <div>
+    <label for="textPhone">Phone (through directive): </label>
+    <input #phone mask [maskType]="'phone'" id="textPhone" type="text" placeholder="textPhone"/>
+  </div>
+
+=== rs - заполнение расчетного счета
+****
+Атрибуты:
+[maskType]="'rs'"
+[maskOptions]="'БИК_ОТ_ЭТОГО_РС'"
+****
+****
+Для корректного подсчета контрольных сумм в поле maskOptions должен быть передан БИК банка, где находится этот расчетный счет
+****
+****
+Отсекает все кроме цифр. Отсекает все после 20 цифры. В случае несовпадения контрольной суммы отправляет ивент с текстом 'RS is invalid'
+****
+
+Пример использования:
+
+[source]
+  <div>
+    <label for="textBik">БИК (through directive): </label>
+    <input #bik mask [maskType]="'bik'" id="textBik" type="text" placeholder="textBik"/>
+  </div>
+  <div>
+    <label for="textRs">Р/С (through directive): </label>
+    <input #rs mask [maskType]="'rs'" [maskOptions]="bik.value" id="textRs" type="text" placeholder="textRs" [disabled]="bik?.value?.length !== 9"/>
+  </div>
+
+=== Перехват ивентов
+****
+Работа с частью проверок, которые не проходят по маске выведена вместо режима блокировки ввода в кастомные сообщения которые передаются объекту ввода.  с тем, чтобы программист сам решил, какое поведение он хочет от объекта в случае ошибки
+****
+****
+Соответствующий ивент носит название типа маски и в поле detail содержит объект вида detail: {type: "ТИП МАСКИ", textError: "ТЕКСТ_СООБЩЕНИЯ"}. Способ перехвата сообщения оставляется на выбор разработчика. Ниже приведен пример одного из вариантов перехвата.
+****
+
+Пример ивента:
+[source]
+CustomEvent {
+...
+    detail: {type: "inn", textError: "More then 12 digit or isn't digit"},
+...
+}
+detail: {type: "inn", textError: "More then 12 digit or isn't digit"}
+
+****
+Пример перехвата ивента:
+****
+
+Файл app.component.html (добавляем #email):
+[source]
+  <div>
+    <label for="textEmail">Email (through directive): </label>
+    <input #email mask [maskType]="'email'" id="textEmail" type="text" placeholder="textEmail"/>
+  </div>
+
+Файл app.component.ts (добавляем #email):
+[source]
+export class AppComponent implements AfterViewInit{
+...
+  @ViewChild('email') email: ElementRef<HTMLInputElement>;
+...
+  public ngAfterViewInit() {
+    this.email.nativeElement.addEventListener("maskError", event => console.log('maskError: ', event));
+  }
+
